@@ -1,0 +1,200 @@
+/* One typeface (Paper Mono, SIL OFL 1.1). The interface is the bench's own equipment in a neon city: black panels with one
+   corner cut off, a hairline edge, and three signal colours. Yellow is the game speaking, cyan is the chip, magenta is radio. */
+@font-face{font-family:"Paper Mono";src:url("https://cdn.jsdelivr.net/gh/paper-design/paper-mono@v1.000/fonts/webfonts/PaperMono%5Bwght%5D.woff2") format("woff2");font-weight:100 800;font-display:swap}
+:root{--bg:#05060a;--panel:#090b12;--panel2:#0e111b;--ink:#e9f1f5;--dim:#7f8a99;--faint:#465061;--line:#2b3a4a;
+ --yel:#fcee0a;--amber:#ffb347;--cyan:#39f0ff;--mag:#ff3bd4;--red:#ff4a5e;--green:#7dffb2;
+ --f:"Paper Mono",ui-monospace,"SF Mono",Menlo,monospace;
+ --scan:repeating-linear-gradient(0deg,rgba(255,255,255,.028) 0 1px,transparent 1px 3px)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--f);overflow:hidden;user-select:none;-webkit-user-select:none}
+#view{position:fixed;inset:0}
+#gl{width:100%;height:100%;display:block;touch-action:none}
+.off{display:none!important}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button:focus-visible{outline:1px dashed var(--yel);outline-offset:4px}
+
+#hud{position:fixed;inset:0;pointer-events:none}
+#hud>*{pointer-events:auto;position:absolute}
+
+/* a panel: the element is the hairline, its ::before is the face, both cut to the same shape */
+.pnl{isolation:isolate;background:var(--edge,var(--line));clip-path:var(--cut)}
+.pnl::before{content:"";position:absolute;inset:1px;z-index:-1;clip-path:var(--cut);background:var(--scan),linear-gradient(160deg,var(--panel2),var(--panel) 60%)}
+
+/* ---- the work order: what you are trying to do ---- */
+#slip{left:24px;top:22px;width:306px;padding:0 0 8px;--edge:linear-gradient(160deg,var(--yel) 0 26%,var(--line) 26%);
+ --cut:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,16px 100%,0 calc(100% - 16px))}
+#slipHead{display:flex;align-items:center;gap:8px;margin:1px 1px 8px;padding:0 30px 0 12px;font:800 11px/26px var(--f);letter-spacing:.16em;text-transform:uppercase;color:#07080a;background:var(--yel);
+ clip-path:polygon(0 0,calc(100% - 19px) 0,100% 19px,100% 100%,0 100%)}
+#slipHead:empty{display:none}
+#slipHead::after{content:"";flex:1;height:8px;background:repeating-linear-gradient(90deg,#07080a 0 2px,transparent 2px 5px);opacity:.55}
+#goals{list-style:none;padding:0 16px 0 14px;font:500 14px/24px var(--f)}
+#goals li{position:relative;padding-left:20px;transition:color .4s}
+#goals li::before{content:"";position:absolute;left:1px;top:8px;width:8px;height:8px;border:1px solid var(--faint);transform:rotate(45deg)}
+#goals li.now{font-weight:700;color:var(--ink)}
+#goals li.now::before{border-color:var(--yel);background:var(--yel);box-shadow:0 0 8px rgba(252,238,10,.7);animation:pip 1.4s ease-in-out infinite}
+@keyframes pip{50%{box-shadow:0 0 2px rgba(252,238,10,.3)}}
+#goals li.later{color:var(--faint)}
+#goals li.done{color:var(--dim);text-decoration:line-through;text-decoration-color:rgba(57,240,255,.55)}
+#goals li.done::before{border-color:var(--cyan);background:var(--cyan)}
+#pencil{padding:0 16px 0 14px;font:400 13px/24px var(--f);color:var(--cyan)}
+#pencil:empty{display:none}
+#pencil::before{content:"// ";opacity:.6}
+#doIt{margin:2px 0 4px 14px;padding:0 10px;font:700 12px/22px var(--f);letter-spacing:.06em;color:#07080a;background:var(--cyan)}
+#slip footer{display:flex;justify-content:space-between;margin-top:6px;padding:4px 14px 0 30px;border-top:1px solid rgba(43,58,74,.8);font:500 10px/22px var(--f);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+#slip footer button{text-transform:uppercase;letter-spacing:.12em}
+#slip footer button:hover{color:var(--yel)}
+#noteCount{font-style:normal;color:var(--ink)}
+
+/* ---- station marks: the chain from button to lamp ---- */
+#chain{right:26px;top:24px;display:flex;gap:3px;font:700 10px/1 var(--f);letter-spacing:.02em}
+#chain i{font-style:normal;color:var(--faint);padding:4px 4px 3px;border:1px solid rgba(70,80,97,.45);transform:skewX(-14deg)}
+#chain i.open{color:var(--dim)}
+#chain i.lit{color:#07080a;background:var(--yel);border-color:var(--yel)}
+#chain i.here{color:var(--cyan);background:none;border-color:var(--cyan);box-shadow:0 0 10px rgba(57,240,255,.45),inset 0 0 6px rgba(57,240,255,.25)}
+#chain i.lit.here{color:#07080a;background:var(--cyan)}
+
+/* ---- the dock: the game's voice on the left, the instrument on the right ---- */
+#dock{left:24px;right:24px;bottom:22px;display:flex;align-items:flex-end;justify-content:space-between;gap:22px;pointer-events:none!important}
+#dock>*{pointer-events:auto}
+/* the game's one voice. It waits for you. */
+#say{position:relative;flex:0 1 620px;text-align:left;padding:14px 58px 14px 26px;color:var(--ink);font:500 16px/1.5 var(--f);
+ --edge:linear-gradient(90deg,var(--yel) 0 5px,var(--line) 5px);--cut:polygon(0 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%)}
+#say::after{content:"";position:absolute;left:12px;top:10px;width:6px;height:6px;background:var(--yel);transform:rotate(45deg)}
+#say.note{--edge:linear-gradient(90deg,var(--cyan) 0 5px,var(--line) 5px);color:#c9d6de}
+#say.note::after{background:var(--cyan)}
+#sayGo{position:absolute;right:26px;bottom:11px;font:800 12px/20px var(--f);font-style:normal;width:20px;height:20px;text-align:center;color:#07080a;background:var(--yel);opacity:0}
+#say.ready #sayGo{opacity:1;animation:nudge .9s steps(2,jump-none) infinite}
+@keyframes nudge{50%{transform:translateY(-3px);box-shadow:0 0 12px rgba(252,238,10,.6)}}
+body.calm #say.ready #sayGo{animation:none}
+
+/* ---- the instrument ---- */
+#scope{flex:0 0 min(560px,46vw);margin-left:auto;padding:12px 12px 10px;
+ --edge:linear-gradient(200deg,var(--cyan) 0 12%,var(--line) 12%);--cut:polygon(18px 0,100% 0,100% 100%,0 100%,0 18px)}
+#scope .bezel{position:relative;overflow:hidden;background:#04070a;box-shadow:0 0 0 1px #000,0 0 0 2px #17202b,inset 0 0 40px rgba(0,0,0,.9)}
+#scope .bezel::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.2) 0 1px,transparent 1px 3px),radial-gradient(ellipse at 50% 40%,transparent 55%,rgba(0,0,0,.55))}
+#scopeCv{display:block;width:100%;height:auto}
+#scope .ctl{display:flex;justify-content:space-between;align-items:center;padding:9px 4px 0 6px;font:600 10px/1 var(--f);letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+#scopeLbl::before{content:"";display:inline-block;width:6px;height:6px;margin-right:8px;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+#scope .time{display:flex;align-items:center;gap:10px}
+#knobLbl{color:var(--amber);text-transform:none;letter-spacing:.02em;font-size:13px}
+#knob{position:relative;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3b4250,#12151c 70%);box-shadow:0 0 0 1px #000,0 0 0 3px #1a2029,0 0 0 4px rgba(57,240,255,.35),inset 0 1px 0 rgba(255,255,255,.18);transition:transform .18s cubic-bezier(.3,1.6,.5,1)}
+#knob i{position:absolute;left:50%;top:5px;width:2px;height:13px;margin-left:-1px;background:var(--amber);box-shadow:0 0 6px var(--amber)}
+#knob.locked{opacity:.45;cursor:default}
+#knob.want{animation:want 1.1s ease-in-out infinite}
+@keyframes want{50%{box-shadow:0 0 0 1px #000,0 0 0 3px #1a2029,0 0 0 7px rgba(255,179,71,.7),0 0 22px rgba(255,179,71,.6)}}
+#scope .keys{color:var(--faint)}
+#menuBtn{right:26px;top:52px;font:600 10px/1 var(--f);color:var(--dim);letter-spacing:.16em;text-transform:uppercase;padding:4px 0}
+#menuBtn::before{content:"≡ "}
+#menuBtn:hover{color:var(--yel)}
+
+/* ---- callouts pinned to things in the world: a name plate, a leader, a point ---- */
+#tags{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.tag{position:absolute;left:0;top:0;white-space:nowrap;font:700 11px/1.35 var(--f);letter-spacing:.07em;text-transform:uppercase;color:var(--ink);text-align:center;padding-bottom:calc(var(--lead,24px) + 6px);will-change:transform;transition:opacity .2s}
+.tag .tx{display:inline-block;padding:2px 8px 2px 7px;background:rgba(5,6,10,.78);border-left:2px solid currentColor;clip-path:polygon(0 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%)}
+.tag small{display:block;font-weight:500;font-size:10px;letter-spacing:.04em;text-transform:none;opacity:.78}
+.tag::after{content:"";position:absolute;left:var(--ax,50%);bottom:3px;width:1px;height:var(--lead,24px);background:currentColor;opacity:.7}
+.tag::before{content:"";position:absolute;left:var(--ax,50%);bottom:0;width:5px;height:5px;margin-left:-2px;background:currentColor;transform:rotate(45deg);box-shadow:0 0 8px currentColor}
+.tag.down{padding-bottom:0;padding-top:calc(var(--lead,24px) + 6px)}.tag.down::after{bottom:auto;top:3px}.tag.down::before{bottom:auto;top:0}
+.tag.bare{padding-bottom:0}.tag.bare::after,.tag.bare::before{display:none}
+.tag.bare .tx{border-left:0;background:rgba(5,6,10,.6);clip-path:none}
+.tag.amber{color:var(--amber)}.tag.cyan{color:var(--cyan)}.tag.mag{color:var(--mag)}.tag.red{color:var(--red)}
+.tag.faint{opacity:.5}
+.tag .pip{display:inline-block;width:6px;height:6px;margin:0 1px;background:currentColor}
+
+/* ---- cuts between places: shutters slam across, the picture tears ---- */
+#flash,#fade{position:fixed;inset:0;pointer-events:none}
+#flash{opacity:0;background:#dffaff;mix-blend-mode:screen}
+#fade{display:flex;flex-direction:column;z-index:4}
+#fade i{flex:1;margin:0 -4px -1px;transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.75,0,.2,1);transition-delay:calc(var(--i)*16ms);
+ background:linear-gradient(90deg,#05060a calc(100% - 3px),var(--yel) 0)}
+#fade i:nth-child(even){transform-origin:right;background:linear-gradient(270deg,#05060a calc(100% - 3px),var(--cyan) 0)}
+#fade.on i{transform:scaleX(1)}
+body.calm #fade i{transition-delay:0s}
+#view.jolt{animation:jolt .32s steps(3) 1}
+@keyframes jolt{0%{transform:translate(7px,-3px)}33%{transform:translate(-9px,4px)}66%{transform:translate(4px,2px)}100%{transform:none}}
+body.calm #view.jolt{animation:none}
+
+/* the card that names a station as you arrive */
+#card{position:fixed;left:0;right:0;top:24vh;z-index:3;pointer-events:none;display:flex;align-items:center;justify-content:center;gap:18px;opacity:0}
+#card b{font:800 clamp(64px,11vw,150px)/.9 var(--f);color:transparent;-webkit-text-stroke:1.5px var(--yel);letter-spacing:-.04em}
+#card span{font:800 clamp(14px,2vw,24px)/1 var(--f);letter-spacing:.22em;text-transform:uppercase;color:#07080a;background:var(--yel);padding:8px 14px 7px 16px;clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%)}
+#card small{display:block;font:600 10px/1 var(--f);letter-spacing:.3em;margin-bottom:6px;opacity:.6}
+#card.go{animation:card 2.3s linear 1 both}
+@keyframes card{0%{opacity:0;transform:translateX(-40px);clip-path:inset(0 100% 0 0)}7%{opacity:1;transform:translateX(6px);clip-path:inset(0 0 0 0)}10%{transform:translateX(-3px)}12%,78%{opacity:1;transform:none;clip-path:inset(0 0 0 0)}
+ 80%{clip-path:inset(0 0 62% 0);transform:translateX(10px)}84%{clip-path:inset(40% 0 20% 0);transform:translateX(-14px)}88%{clip-path:inset(70% 0 0 0);transform:translateX(8px);opacity:1}92%,100%{opacity:0;clip-path:inset(100% 0 0 0)}}
+body.calm #card.go{animation:cardCalm 2.3s linear 1 both}
+@keyframes cardCalm{0%,100%{opacity:0}10%,80%{opacity:1}}
+
+/* ---- full screens ---- */
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;padding:24px;z-index:5;background:var(--scan),rgba(4,5,9,.88)}
+#title{align-items:flex-start;text-align:left;padding:0 8vw;gap:20px;background:var(--scan),linear-gradient(90deg,rgba(4,5,9,.94) 0,rgba(4,5,9,.72) 38%,rgba(4,5,9,.08) 78%)}
+#title .rail{position:absolute;left:8vw;right:8vw;display:flex;justify-content:space-between;font:600 10px/1 var(--f);letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
+#title .rail.top{top:34px;padding-bottom:10px;border-bottom:1px solid rgba(127,138,153,.25)}
+#title .rail.bot{bottom:30px;padding-top:10px;border-top:1px solid rgba(127,138,153,.25)}
+#title .rail b{font-weight:600;color:var(--yel)}
+h1{position:relative;font:800 clamp(54px,10.5vw,168px)/.84 var(--f);letter-spacing:-.05em;text-transform:uppercase;color:var(--yel);margin-left:-.04em}
+h1 em{display:block;font-style:normal;color:transparent;-webkit-text-stroke:1.5px var(--yel)}
+h1::before,h1::after{content:attr(data-t);position:absolute;inset:0;white-space:pre-line;pointer-events:none;mix-blend-mode:screen;opacity:.85}
+h1::before{color:var(--cyan);animation:slice 4.7s steps(1) infinite}
+h1::after{color:var(--mag);animation:slice 3.9s steps(1) infinite reverse}
+@keyframes slice{0%,100%{clip-path:inset(0 0 100% 0);transform:none}
+ 6%{clip-path:inset(12% 0 70% 0);transform:translateX(-7px)}8%{clip-path:inset(58% 0 22% 0);transform:translateX(9px)}10%{clip-path:inset(0 0 100% 0)}
+ 52%{clip-path:inset(40% 0 44% 0);transform:translateX(5px)}53%{clip-path:inset(82% 0 6% 0);transform:translateX(-11px)}55%{clip-path:inset(0 0 100% 0)}}
+body.calm h1::before,body.calm h1::after{display:none}
+h2{font:800 30px/1.1 var(--f);letter-spacing:.02em;text-transform:uppercase}
+#titleLine{font:500 16px/1.6 var(--f);color:var(--ink);min-height:1.6em;padding-left:14px;border-left:3px solid var(--cyan)}
+.fine{font:400 12px/1.6 var(--f);color:var(--dim);max-width:560px}
+#loadErr:empty{display:none}
+/* the button the whole game is about */
+.key{position:relative;margin-top:14px;width:220px;height:64px;background:var(--yel);color:#07080a;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));transition:transform .08s,background .08s}
+.key span{font:800 16px/1 var(--f);letter-spacing:.3em;text-transform:uppercase}
+.key span::before{content:"▸ "}
+.key::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:repeating-linear-gradient(90deg,#07080a 0 3px,transparent 3px 7px);opacity:.5}
+.key:hover{background:#fff}
+.key:active,.key.down{transform:translate(3px,4px);background:var(--cyan)}
+.link{font:500 12px/1.6 var(--f);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.link::before{content:"[ "}.link::after{content:" ]"}
+.link:hover{color:var(--cyan)}
+#menu{align-items:flex-start;text-align:left;padding:0 8vw}
+#menu h2{color:var(--yel);padding-bottom:10px;border-bottom:1px solid var(--line);min-width:min(420px,84vw)}
+.list{display:flex;flex-direction:column;gap:0;align-items:flex-start}
+.list{max-height:62vh;overflow:auto}#menuStations{margin:6px 0;padding:6px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);min-width:min(420px,84vw)}
+#menuStations button{font-size:14px;line-height:1.9}
+.list button{font:500 17px/2 var(--f);color:var(--dim);padding:0 14px 0 0;text-align:left;transition:padding .12s,color .12s}
+.list button:hover{color:#07080a;background:var(--yel);padding:0 14px 0 12px}
+
+/* data sheets: the notebook and the sign-off at the end of a station */
+.paper{background:var(--scan),rgba(4,5,9,.9)}
+.paper article{position:relative;width:min(720px,92vw);max-height:86vh;overflow:auto;padding:34px 40px 28px 44px;text-align:left;color:var(--ink);
+ background:var(--scan),linear-gradient(160deg,var(--panel2),var(--panel) 60%);border:1px solid var(--line);border-left:4px solid var(--yel);
+ clip-path:polygon(0 0,calc(100% - 28px) 0,100% 28px,100% 100%,0 100%)}
+.paper h2{font:800 30px/1.2 var(--f);color:var(--yel);padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.paper h3{font:700 10px/28px var(--f);letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);margin-top:22px}
+.paper h3::before{content:"// "}
+.paper p,.paper li{font:400 15px/27px var(--f);color:#cfd9e0}
+.paper ul{list-style:none;padding:0}
+.paper li{position:relative;padding-left:18px}
+.paper li::before{content:"";position:absolute;left:1px;top:10px;width:6px;height:6px;background:var(--cyan);transform:rotate(45deg)}
+.paper li b{font-weight:700;color:var(--ink)}
+.paper li i{font-style:normal;color:var(--dim);font-size:11px;letter-spacing:.02em}
+.paper .nums{display:flex;gap:34px;flex-wrap:wrap}
+.paper .nums div{font:500 11px/24px var(--f);letter-spacing:.08em;color:var(--dim)}
+.paper .nums b{display:block;font:300 36px/50px var(--f);color:var(--ink)}
+.paper .sign{margin-top:26px;padding:0 22px;font:800 14px/42px var(--f);letter-spacing:.14em;text-transform:uppercase;color:#07080a;background:var(--yel);clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%)}
+.paper .sign:hover{background:#fff}
+.paper .link{margin-top:24px;display:inline-block}
+@media (max-width:1100px){#slip{width:276px;transform:scale(.92);transform-origin:0 0}#scope .keys{display:none}}
+/* phones: one goal on the work order, the voice stacked over a full-width instrument, no key legends */
+@media (max-width:720px){
+ #slip{left:10px;top:10px;width:min(250px,66vw);padding-bottom:4px;transform:none}
+ #slipHead{font-size:10px;line-height:22px;margin-bottom:5px}
+ #goals li.later,#goals li.done{display:none}#goals{font-size:13px}#hintBtn{padding:0 4px}
+ #chain{display:none}#menuBtn{right:12px;top:14px;font-size:12px;padding:8px}
+ #dock{left:10px;right:10px;bottom:10px;flex-direction:column;align-items:stretch;gap:10px}
+ #say{flex:none;font-size:15px;padding:11px 46px 11px 22px}#say::after{left:10px;top:9px}#sayGo{right:18px}
+ #scope{flex:none;margin:0;padding:8px 8px 6px}#knob{width:48px;height:48px}#scopeLbl{display:none}#scope .time{width:100%;justify-content:space-between}#scope .ctl{padding-top:6px}#knobLbl{font-size:14px}
+ .tag{font-size:10px}.paper article{padding:22px 18px 18px 20px}.paper h2{font-size:22px}
+ #title,#menu{padding:0 22px}#title .rail{left:22px;right:22px}#title .rail.top{top:22px}#title .rail.bot{bottom:20px}h1{font-size:19vw}
+ .key{width:100%;height:72px}#card{top:30vh;gap:10px}
+}
+@media (pointer:coarse),(max-width:720px){#scope .keys{display:none}#knob{width:52px;height:52px}#sayGo{font-size:0}#sayGo::after{content:"▸";font-size:12px}}

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>One Press</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://unpkg.com/@strudel/web@1.3.0" async></script>
+<script type="importmap">{"imports":{
+ "three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+ "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="view"><canvas id="gl"></canvas></div>
+<div id="tags"></div>
+
+<div id="hud" class="off">
+  <!-- the notebook slip: what you are trying to do, in your own lab notes -->
+  <aside id="slip" class="pnl">
+    <header id="slipHead"></header>
+    <ol id="goals"></ol>
+    <p id="pencil"></p>
+    <button id="doIt" class="off">do it for me</button>
+    <footer><button id="noteBtn">notebook · <i id="noteCount">0</i></button><button id="hintBtn" title="H">stuck?</button></footer>
+  </aside>
+
+  <nav id="chain" aria-label="stations"></nav>
+
+  <div id="dock">
+    <!-- the game's one voice. Nothing moves on until the player says so. -->
+    <button id="say" class="pnl off"><span id="sayText"></span><i id="sayGo">Z</i></button>
+    <!-- the instrument: one screen, one knob -->
+    <section id="scope" class="pnl off">
+      <div class="bezel"><canvas id="scopeCv" width="1040" height="440"></canvas></div>
+      <div class="ctl">
+        <span id="scopeLbl"></span>
+        <div class="time"><span id="knobLbl"></span><button id="knob" aria-label="knob"><i></i></button><span class="keys">Q&thinsp;·&thinsp;E</span></div>
+      </div>
+    </section>
+  </div>
+  <button id="menuBtn">menu</button>
+</div>
+
+<div id="flash"></div>
+<div id="card"><b></b><span></span></div>
+<div id="fade"></div>
+
+<section id="title" class="screen">
+  <div class="rail top"><span>esp32 &middot; 2.4 ghz</span><span>thirteen stations</span></div>
+  <h1 data-t="one&#10;press">one<em>press</em></h1>
+  <p id="titleLine">a board. a lamp across the room.</p>
+  <button id="btnPress" class="key off"><span>press</span></button>
+  <button id="btnContinue" class="link off">continue where you left off</button>
+  <p id="loadErr" class="fine"></p>
+  <div class="rail bot"><span>button <b>&rarr;</b> lamp</span><span>progress saves in this browser</span></div>
+</section>
+
+<section id="menu" class="screen off">
+  <h2>paused</h2>
+  <div class="list">
+    <button data-m="resume">resume</button>
+    <div id="menuStations" class="list"></div>
+    <button data-m="sound">sound: on</button>
+    <button data-m="motion">motion: full</button>
+    <button data-m="wipe">erase everything</button>
+  </div>
+  <p class="fine">Z or tap to continue · drag to look · scroll or pinch to zoom · Q E turn the knob · H when stuck</p>
+</section>
+
+<section id="book" class="screen paper off"><article><h2>notebook</h2><div id="noteList"></div><button data-close class="link">close</button></article></section>
+<section id="page" class="screen paper off"></section>
+
+<script>
+/* the engine is an ES module; if any part of it fails to load, say so instead of showing a dead title screen */
+addEventListener('error',e=>{if(e.target&&(e.target.tagName==='SCRIPT'||e.target.tagName==='LINK'))fail()},true);
+function fail(){if(!window.game)document.getElementById('loadErr').textContent='the engine did not load (three.js and the font come from a CDN, so this needs a connection). reload to try again.'}
+setTimeout(fail,9000);
+</script>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

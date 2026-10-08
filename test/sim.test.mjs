@@ -1,0 +1,20 @@
+import assert from 'node:assert';
+import {capture,CAPS,RAIL} from '../src/sim/rail.js';
+import {Sched,HAND_TASKS,BATON_TASKS} from '../src/sim/sched.js';
+const Ks=[.2,.3,.5,.7,1,1.4,2,3,4,6,8],pass=c=>Ks.filter(K=>capture(c,K).ok);
+for(const k in CAPS)console.log('loop',k,'passes at gain',pass(CAPS[k]).join(' ')||'never');
+assert.equal(pass(0).length,0,'the bare rail must fail at every gain');
+assert.equal(pass(CAPS.c100n).length,0,'100 nF must fail at every gain');
+assert(pass(CAPS.c22u).length>=3,'22 uF must have a usable range of gain');
+assert(pass(CAPS.c100u).length>pass(CAPS.c22u).length,'100 uF must forgive more gain than 22 uF');
+assert(capture(CAPS.c22u,.3).fault==='brownout','low gain must sag');
+const perms=[[1,1,1],[3,2,1],[3,1,2],[2,3,1],[1,3,2],[1,2,3],[2,1,3],[2,2,1],[2,1,1],[3,3,3],[2,2,2],[1,2,2]];
+for(const p of perms){const s=new Sched({tasks:HAND_TASKS(p)}).run(1000);console.log('prio',p.join(''),JSON.stringify(s.misses()))}
+assert(new Sched({tasks:HAND_TASKS([1,1,1])}).run(1000).total()>0,'all equal must miss');
+assert.equal(new Sched({tasks:HAND_TASKS([3,2,1])}).run(1000).total(),0,'button on top must pass');
+const a=new Sched({tasks:BATON_TASKS(),watch:'BUTTON',wdt:8}).run(200);console.log('inversion bite',a.bite,'at',a.t,a.log.map(e=>(e.run||'-')[0]).join(''));
+assert(a.bite,'inversion must trip the watchdog');
+const b=new Sched({tasks:BATON_TASKS(),watch:'BUTTON',wdt:8,inherit:true}).run(1000);console.log('inherit bite',b.bite,JSON.stringify(b.misses()),b.log.slice(0,20).map(e=>(e.run||'-')[0]).join(''));
+assert(!b.bite&&b.total()===0,'inheritance must pass');
+const c=new Sched({tasks:BATON_TASKS(),watch:'BUTTON',wdt:8});c.step();c.step();c.step();assert(c.inversionAhead(),'inversion detected at t=3');
+console.log('ok');
