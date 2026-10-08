@@ -72,35 +72,6 @@ src/bot.js          development check that plays all stations (console: game.bot
 test/               node test/sim.test.mjs
 ```
 
-## Deploying to Cloudflare Pages
-
-The site is fully static with **no build step**, so the repository root is the
-publish directory.
-
-### Git-connected project (recommended)
-
-1. Push this repository to GitHub (already at `darkwebber/ESPunk`).
-2. In the Cloudflare dashboard: **Workers & Pages → Create → Pages → Connect to Git**.
-3. Select the repository and set:
-   - **Framework preset:** None
-   - **Build command:** leave empty
-   - **Build output directory:** `/`
-4. Save and deploy. Every push to `main` redeploys.
-
-### Direct upload with Wrangler
-
-No configuration file is required:
-
-```bash
-npx wrangler pages deploy . --project-name espunk
-```
-
-The first run creates the project and prints the live `*.pages.dev` URL.
-
-Because every dependency (Three.js, Paper Mono, Strudel) is fetched from a public
-CDN at runtime, no asset copying or bundling is needed — deploying is literally
-uploading the files as they are.
-
 ## Credits
 
 - Game and code: [Contributors](CONTRIBUTORS.md).
