@@ -82,7 +82,7 @@ const G=window.game={ORDER,
     if(this.flow)this.flow.cancel();
     this.things.length=0;if(this.flyJob&&this.flyJob.kind!=='press')this.flyJob=null;this.act={};this.update=null;this.onKnob=null;this.held=null;this.rig.locked=false;
     hud.clearTags();hud.scope(null);hud.hush();hud.slip('',[]);hud.wantKnob(false);this.beacons.forEach(b=>b.hide());
-    this.setKnobs([{label:'1 s = 1 s',rate:1}],0,true);this.chapter=name;this.station=ORDER.indexOf(name);save.data.at=name;save.store();audio.music.scene(name);if(this.station>=0)hud.card(this.station,STATIONS[this.station]);this.holdMode=false;hud.refresh();
+    this.setKnobs([{label:'1 s = 1 s',rate:1}],0,true);this.chapter=name;this.station=ORDER.indexOf(name);save.data.at=name;save.store();document.title=(this.station>=0?`${String(this.station).padStart(2,'0')} · ${STATIONS[this.station]}`:'the bench')+' — One Press';audio.music.scene(name);if(this.station>=0)hud.card(this.station,STATIONS[this.station]);this.holdMode=false;hud.refresh();
     const flow=this.flow=new Flow();
     PLAY[name](this,flow).catch(e=>{if(e!==CANCEL){console.error(e);hud.hush();hud.say('error: '+(e.message||e))}});
   },
