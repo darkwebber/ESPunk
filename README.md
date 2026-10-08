@@ -18,6 +18,8 @@ See [DESIGN.md](DESIGN.md) for the full design bible.
 
 ## Play
 
+Play the game online at **[esp.grasp.how](https://esp.grasp.how)**.
+
 The build is plain static files. ES modules must be served over HTTP, so a simple
 local server is enough:
 
